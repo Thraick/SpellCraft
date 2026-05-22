@@ -1,5 +1,6 @@
 const CORRECT_THRESHOLD = 3;
 const DICTIONARY_API = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+const IMPORT_DELAY_MS = 300;
 
 const Store = (() => {
   function loadWords() {
@@ -150,7 +151,7 @@ const Store = (() => {
     return { words, total, groups };
   }
 
-  async function importWords(rawWords, group) {
+  async function importWords(rawWords, group, onProgress) {
     const words = loadWords();
     const existing = new Set(words.map((w) => w.word.toLowerCase()));
     let added = 0;
@@ -158,11 +159,15 @@ const Store = (() => {
     let disabled = 0;
     let noAudio = 0;
     const today = todayISO();
-    for (const raw of rawWords) {
+    const total = rawWords.length;
+    for (let i = 0; i < rawWords.length; i++) {
+      const raw = rawWords[i];
       if (existing.has(raw)) {
         skipped++;
+        if (onProgress) onProgress(i + 1, total);
         continue;
       }
+      await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
       const info = await lookupWord(raw);
       if (info) {
         if (info.audioUrl) {
@@ -215,16 +220,16 @@ const Store = (() => {
         existing.add(raw);
         disabled++;
       }
+      saveWords(words);
+      if (onProgress) onProgress(i + 1, total);
     }
-    saveWords(words);
-    const totalExtracted = rawWords.length;
-    const pct = totalExtracted ? Math.round((added / totalExtracted) * 1000) / 10 : 0;
+    const pct = total ? Math.round((added / total) * 1000) / 10 : 0;
     return {
       added,
       skipped,
       disabled,
       noAudio,
-      totalExtracted,
+      totalExtracted: total,
       percentage: pct,
       extractedWords: rawWords,
     };

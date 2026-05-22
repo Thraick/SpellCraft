@@ -34,7 +34,10 @@ function showExtracted(data) {
     .join('');
 }
 
+let importing = false;
+
 async function extractWords() {
+  if (importing) return;
   const file = document.getElementById('file-input').files[0];
   const text = document.getElementById('text-input').value.trim();
   const group = document.getElementById('import-group').value.trim();
@@ -67,7 +70,14 @@ async function extractWords() {
       rawWords = Store.extractWordsFromText(text);
     }
     if (!Array.isArray(rawWords)) rawWords = Store.extractWordsFromText(text);
-    const data = await Store.importWords(rawWords, group);
+
+    setImporting(true);
+    const data = await Store.importWords(rawWords, group, (current, total) => {
+      const pct = total ? Math.round((current / total) * 100) : 0;
+      document.getElementById('import-progress-fill').style.width = pct + '%';
+      document.getElementById('import-progress-text').textContent = `Looking up ${current} / ${total} words...`;
+    });
+    document.getElementById('import-progress').style.display = 'none';
     let msg = `Added: ${data.added}`;
     if (data.noAudio) msg += `, No audio: ${data.noAudio}`;
     if (data.disabled) msg += `, Not in dictionary: ${data.disabled}`;
@@ -78,9 +88,29 @@ async function extractWords() {
     document.getElementById('file-input').value = '';
     document.getElementById('file-name').textContent = '';
     document.getElementById('import-group').value = '';
+    setImporting(false);
     loadWords();
   } catch (e) {
+    document.getElementById('import-progress').style.display = 'none';
+    setImporting(false);
     showResult('import-result', 'Error extracting words: ' + e.message, 'error');
+  }
+}
+
+function setImporting(active) {
+  importing = active;
+  const btn = document.getElementById('extract-btn');
+  const prog = document.getElementById('import-progress');
+  const progressBar = document.getElementById('import-progress-fill');
+  if (active) {
+    btn.disabled = true;
+    btn.textContent = 'Importing...';
+    prog.style.display = '';
+    progressBar.style.width = '0%';
+    document.getElementById('import-progress-text').textContent = 'Looking up words...';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Extract Words';
   }
 }
 

@@ -32,7 +32,11 @@
         <span id="file-name" style="color: var(--text-secondary); font-size: 0.85rem; align-self: center;"></span>
       </div>
       <div class="config-actions" style="margin-top: 0.75rem;">
-        <button class="btn btn-primary" onclick="extractWords()">Extract Words</button>
+        <button class="btn btn-primary" id="extract-btn" onclick="extractWords()">Extract Words</button>
+      </div>
+      <div class="import-progress" id="import-progress" style="display:none;">
+        <div class="import-progress-bar"><div class="import-progress-fill" id="import-progress-fill"></div></div>
+        <div class="import-progress-text" id="import-progress-text">Looking up words...</div>
       </div>
       <div class="import-result" id="import-result"></div>
       <div class="extracted-preview" id="import-extracted" style="display:none;">
