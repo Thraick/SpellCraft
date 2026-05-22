@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpellCraft - Stats</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="brand">SpellCraft</a>
+    <div class="nav-links">
+      <a href="index.html" id="nav-game">Game</a>
+      <a href="config.html" id="nav-config">Config</a>
+      <a href="stats.html" id="nav-stats">Stats</a>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">&#9790;</button>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="card">
+      <h2 style="font-size: 1rem; margin-bottom: 1rem;">Daily Progress (last 14 days)</h2>
+      <div class="chart-container">
+        <div class="chart-bars" id="chart-bars"></div>
+        <div class="chart-legend">
+          <span class="legend-correct">Correct</span>
+          <span class="legend-incorrect">Incorrect</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size: 1rem; margin-bottom: 0.75rem;">Mastered Words <span id="mastered-count" style="color: var(--correct); font-size: 0.85rem;"></span></h2>
+      <ul class="word-list" id="mastered-list"></ul>
+      <div id="no-mastered" style="color: var(--text-secondary); font-size: 0.85rem; display: none;">No mastered words yet. Keep practicing!</div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size: 1rem; margin-bottom: 0.75rem;">Words to Learn <span id="learning-count" style="color: var(--primary); font-size: 0.85rem;"></span></h2>
+      <ul class="word-list" id="learning-list"></ul>
+      <div id="no-learning" style="color: var(--text-secondary); font-size: 0.85rem; display: none;">All done! No words left to learn.</div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size: 1rem; margin-bottom: 0.75rem;">Disabled Words <span id="disabled-count" style="color: var(--text-secondary); font-size: 0.85rem;"></span></h2>
+      <ul class="word-list" id="disabled-list"></ul>
+      <div id="no-disabled" style="color: var(--text-secondary); font-size: 0.85rem; display: none;">No disabled words.</div>
+    </div>
+  </div>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.getElementById('themeBtn').innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';
+    }
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeBtn').innerHTML = saved === 'dark' ? '&#9788;' : '&#9790;';
+      }
+      document.getElementById('nav-stats').classList.add('active');
+    })();
+  </script>
+  <script src="static/store.js"></script>
+  <script src="static/stats.js"></script>
+</body>
+</html>

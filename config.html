@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpellCraft - Config</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="brand">SpellCraft</a>
+    <div class="nav-links">
+      <a href="index.html" id="nav-game">Game</a>
+      <a href="config.html" id="nav-config">Config</a>
+      <a href="stats.html" id="nav-stats">Stats</a>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">&#9790;</button>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="config-section card">
+      <h2>Add Words</h2>
+      <div class="config-actions" style="margin-bottom: 0.75rem;">
+        <input type="text" id="import-group" placeholder="Group name (optional)" class="word-search-input" style="max-width: 200px;">
+      </div>
+      <textarea id="text-input" placeholder="Paste text, article, or notes here. Words will be extracted automatically."></textarea>
+      <div class="config-divider"></div>
+      <div class="config-actions">
+        <div class="file-input-wrapper">
+          <button class="btn">Choose File (.txt, .md, .json)</button>
+          <input type="file" id="file-input" accept=".txt,.md,.json">
+        </div>
+        <span id="file-name" style="color: var(--text-secondary); font-size: 0.85rem; align-self: center;"></span>
+      </div>
+      <div class="config-actions" style="margin-top: 0.75rem;">
+        <button class="btn btn-primary" onclick="extractWords()">Extract Words</button>
+      </div>
+      <div class="import-result" id="import-result"></div>
+      <div class="extracted-preview" id="import-extracted" style="display:none;">
+        <div class="extracted-header">
+          <span id="import-extracted-summary"></span>
+        </div>
+        <div class="extracted-word-list" id="import-extracted-words"></div>
+      </div>
+    </div>
+
+    <div class="config-section card">
+      <h2>Import / Export Word List</h2>
+      <div class="config-actions">
+        <div class="file-input-wrapper">
+          <button class="btn">Import JSON</button>
+          <input type="file" id="json-import" accept=".json" onchange="importJson()">
+        </div>
+        <button class="btn" onclick="exportWords()">Export JSON</button>
+        <button class="btn btn-danger" onclick="deleteAll()">Delete All Words</button>
+      </div>
+      <div class="import-result" id="json-result"></div>
+    </div>
+
+    <div class="config-section card">
+      <h2>Word List</h2>
+      <div class="word-list-controls">
+        <input type="text" id="word-search" placeholder="Search words..." class="word-search-input" oninput="loadWords()">
+        <select id="word-status-filter" class="word-status-select" onchange="loadWords()">
+          <option value="">All</option>
+          <option value="learning">Learning</option>
+          <option value="mastered">Mastered</option>
+          <option value="enabled">Enabled</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <select id="word-group-filter" class="word-status-select" onchange="loadWords()">
+          <option value="">All groups</option>
+        </select>
+        <select id="word-limit-select" class="word-status-select" onchange="loadWords()">
+          <option value="">Show all</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <button class="btn btn-danger" id="delete-filtered-btn" onclick="deleteFiltered()">Delete Filtered</button>
+      </div>
+      <div id="word-count-info" style="color: var(--text-secondary); font-size: 0.8rem; margin: 0.5rem 0;"></div>
+      <div id="no-words" style="color: var(--text-secondary); text-align: center; padding: 1rem;">No words yet. Add some above!</div>
+      <div id="word-table-wrapper" style="overflow-x: auto; display: none;">
+        <table class="word-table">
+          <thead>
+            <tr>
+              <th>Word</th>
+              <th>Group</th>
+              <th>Status</th>
+              <th>Correct</th>
+              <th>Incorrect</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="word-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.getElementById('themeBtn').innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';
+    }
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeBtn').innerHTML = saved === 'dark' ? '&#9788;' : '&#9790;';
+      }
+      document.getElementById('nav-config').classList.add('active');
+    })();
+  </script>
+  <script src="static/store.js"></script>
+  <script src="static/config.js"></script>
+</body>
+</html>

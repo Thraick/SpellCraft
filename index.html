@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpellCraft - Game</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="brand">SpellCraft</a>
+    <div class="nav-links">
+      <a href="index.html" id="nav-game">Game</a>
+      <a href="config.html" id="nav-config">Config</a>
+      <a href="stats.html" id="nav-stats">Stats</a>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">&#9790;</button>
+    </div>
+  </nav>
+  <div class="container">
+    <div id="game-area">
+      <div id="empty-state" class="empty-state" style="display:none;">
+        <div class="icon">&#128221;</div>
+        <h3>No words to practice</h3>
+        <p>Go to <a href="config.html">Config</a> to add some words first.</p>
+      </div>
+      <div id="game-content">
+        <div class="progress-bar"><div class="fill" id="progress-fill"></div></div>
+        <div class="word-counter" id="word-counter"></div>
+        <div class="word-info" id="word-info">
+          <div class="definition-display" id="definition-display"></div>
+          <div class="example-display" id="example-display"></div>
+        </div>
+        <div class="phonetic" id="phonetic"></div>
+        <div class="letter-boxes" id="letter-boxes"></div>
+        <div class="game-actions">
+          <button class="btn" id="audio-btn" onclick="playAudio()">&#9835; Listen</button>
+          <button class="btn btn-primary" id="submit-btn" onclick="submitGuess()">Submit</button>
+          <button class="btn btn-danger" id="skip-btn" onclick="skipWord()">Skip</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+    <audio id="audio-player" preload="auto"></audio>
+  </div>
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.getElementById('themeBtn').innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';
+    }
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeBtn').innerHTML = saved === 'dark' ? '&#9788;' : '&#9790;';
+      }
+      const path = location.pathname;
+      if (path.endsWith('index.html') || path.endsWith('/')) {
+        document.getElementById('nav-game').classList.add('active');
+      } else if (path.endsWith('config.html')) {
+        document.getElementById('nav-config').classList.add('active');
+      } else if (path.endsWith('stats.html')) {
+        document.getElementById('nav-stats').classList.add('active');
+      }
+    })();
+  </script>
+  <script src="static/store.js"></script>
+  <script src="static/game.js"></script>
+</body>
+</html>
