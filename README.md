@@ -40,12 +40,14 @@ Default is 3 — the number of correct answers before a word is mastered and rem
 
 ## Word Extractor
 
-A Python script to scan a folder and extract unique words from source files into a `.txt` you can upload or paste into the Config page.
+A Python script to scan files and folders and extract unique English words into a `.txt` you can upload or paste into the Config page.
+
+Filters out garbage (minified code, repeated characters, vowel-less tokens) automatically.
 
 ### Usage
 
 ```bash
-# Scan a folder (default: .md, .py, .ts files)
+# Scan a folder (default: .md, .py, .ts files, min 3 letters)
 python extract_words.py /path/to/folder
 
 # Mix files and folders
@@ -56,6 +58,12 @@ python extract_words.py /path/to/folder --ext .md .py .ts .js --output my_words.
 
 # Skip specific directories
 python extract_words.py /path/to/folder --exclude .git node_modules dist
+
+# Allow 2-letter words (is, it, on, etc.)
+python extract_words.py /path/to/folder --min-length 2
+
+# Strict mode: only words found in a dictionary file
+python extract_words.py /path/to/folder --dict /usr/share/dict/words
 ```
 
 ### Options
@@ -66,8 +74,15 @@ python extract_words.py /path/to/folder --exclude .git node_modules dist
 | `--ext` | `.md .py .ts` | File extensions to read when scanning folders |
 | `--output` | `words.txt` | Output file (one word per line) |
 | `--exclude` | `.git node_modules __pycache__ .venv venv __init__` | Directories to skip |
+| `--min-length` | `3` | Minimum word length |
+| `--dict` | none | Dictionary file (one word per line) to filter against |
 
-The output file contains one unique lowercase word per line. Upload it on the Config page or paste the contents into the text area.
+### Filters applied
+
+- Minimum length (default 3 letters)
+- Must contain at least one vowel (`a e i o u y`) — rejects garbage like `zzzzz`, `xd`
+- No 3+ repeated characters — rejects `zzzzzz`, `aaaaaa`
+- Optional: dictionary whitelist (`--dict`) — only outputs words found in the dictionary file
 
 ## Tech Stack
 
